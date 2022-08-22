@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import {MdShoppingBasket} from 'react-icons/md';
 import {motion} from 'framer-motion';
-
+import  NotFound from '../img/NotFound.svg'
 
 // destructuring my props
 const RowContainer = ({flag , data ,scrollValue}) => {
@@ -11,11 +11,15 @@ const RowContainer = ({flag , data ,scrollValue}) => {
         rowContainer.current.scrollLeft += scrollValue;
     }, [scrollValue]);
   return (
-    <div ref={rowContainer} className={`w-full my-12 flex items-center scroll-smooth  gap-3 ${ flag ? "overflow-x-scroll scrollbar-none" : "overflow-x-hidden flex-wrap"}`}>
-       { data && data.map((item) => (
+    <div ref={rowContainer} className={`w-full my-12 flex items-center scroll-smooth  gap-3 ${ flag ? "overflow-x-scroll scrollbar-none" : "overflow-x-hidden flex-wrap justify-center"}`}>
+      
+       {/* or we can also place data $$ data.legth but since we will get the data we can use alternative below */}
+       {data && data.length >0 ? ( data.map((item) => (
             <div key={item.id} className=' w-300 min-w-[300px] md:w-340 md:min-w-[340] h-auto bg-cardOverlay rounded-lg p-2 my-12   backdrop-blur-lg'>
                 <div whileTap={{scale :0.75}} className='w-full flex items-center justify-between'>
-                    <motion.img whileHover={{scale : 1.2}} src={item?.imageURL} alt="" className='w-40 -mt-8 drop-shadow-2xl'/>
+                   <motion.div whileHover={{scale : 1.2}} className='w-40 -mt-8 h-40 drop-shadow-2xl'>
+                         <img  src={item?.imageURL} alt="" className=' w-full h-full object-contain'/>
+                   </motion.div>
                     <motion.div whileTap={{scale :0.75}} className='w-10 h-10 rounded-full bg-red-600 flex items-center justify-center cursor-pointer hover:shadow-md'>
                         <MdShoppingBasket className='text-white' />
                     </motion.div>
@@ -29,9 +33,12 @@ const RowContainer = ({flag , data ,scrollValue}) => {
                     </div>
                 </div>
             </div>
-       ))
-
-       }
+       )) 
+       ): ( <div className=' w-full flex flex-col items-center justify-center'>
+                <img src={NotFound} alt="" className='h-340' />
+                <p className=' text-xl text-headingColor font-semibold p-3'>Items Not Available</p>
+             </div>
+            ) }
     </div>
   )
 }
