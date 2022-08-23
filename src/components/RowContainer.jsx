@@ -1,15 +1,36 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {MdShoppingBasket} from 'react-icons/md';
 import {motion} from 'framer-motion';
 import  NotFound from '../img/NotFound.svg'
+import { useStateValue } from '../context/stateProvider';
+import { actionType } from '../context/reducer';
 
 // destructuring my props
 const RowContainer = ({flag , data ,scrollValue}) => {
-   
     const rowContainer =useRef();
     useEffect( () => {
         rowContainer.current.scrollLeft += scrollValue;
     }, [scrollValue]);
+    
+    const [{cartItems }, dispatch] = useStateValue();
+    const [items, setItems] = useState([])
+    useEffect(() => { 
+        
+        addtocart()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [items])
+    
+
+    const addtocart = () => {
+        
+            dispatch({
+                type : actionType.SET_CARTITEMS,
+                // destructure like eg: ...cartItems
+                cartItems : items
+            })
+            // sending it to our localstorage to avoid loosing the data when we refresh
+            localStorage.setItem("cartItems", JSON.stringify(items))
+    };
   return (
     <div ref={rowContainer} className={`w-full my-12 flex items-center scroll-smooth  gap-3 ${ flag ? "overflow-x-scroll scrollbar-none" : "overflow-x-hidden flex-wrap justify-center"}`}>
       
@@ -20,7 +41,7 @@ const RowContainer = ({flag , data ,scrollValue}) => {
                    <motion.div whileHover={{scale : 1.2}} className='w-40 -mt-8 h-40 drop-shadow-2xl'>
                          <img  src={item?.imageURL} alt="" className=' w-full h-full object-contain'/>
                    </motion.div>
-                    <motion.div whileTap={{scale :0.75}} className='w-10 h-10 rounded-full bg-red-600 flex items-center justify-center cursor-pointer hover:shadow-md'>
+                    <motion.div whileTap={{scale :0.75}} className='w-10 h-10 rounded-full bg-red-600 flex items-center justify-center cursor-pointer hover:shadow-md' onClick={()=>setItems([...cartItems , item])}>
                         <MdShoppingBasket className='text-white' />
                     </motion.div>
                 </div>
